@@ -52,5 +52,9 @@ module CodeClimate
       CodeClimate::TestReporter.configuration.logger
     end
 
+    def self.on_completion(&block)
+      TestReporter::Formatter.on_completion(&block)
+    end
+
   end
 end

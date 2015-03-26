@@ -12,6 +12,14 @@ require "code_climate/test_reporter/payload_validator"
 module CodeClimate
   module TestReporter
     class Formatter
+      def self.completion_hooks
+        @hooks ||= []
+      end
+
+      def self.on_completion(&block)
+        completion_hooks << block
+      end
+
       def format(result)
         return true unless CodeClimate::TestReporter.run?
 
@@ -26,7 +34,11 @@ module CodeClimate
         else
           client = Client.new
           print "Sending report to #{client.host} for branch #{Git.branch_from_git_or_ci}... "
-          client.post_results(payload)
+          build = client.post_results(payload)
+          if build.current.completed
+            print "Running completion hooks... "
+            run_completion_hooks(build)
+          end
         end
 
         puts "done."
@@ -108,6 +120,12 @@ module CodeClimate
 
       def ci_service_data
         @ci_service_data ||= Ci.service_data
+      end
+
+      def run_completion_hooks(build_info)
+        self.class.completion_hooks.each do |hook|
+          hook.call(build_info)
+        end
       end
     end
   end

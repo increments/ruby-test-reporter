@@ -1,4 +1,5 @@
 require "json"
+require "ostruct"
 require "uri"
 require "net/https"
 
@@ -64,7 +65,7 @@ module CodeClimate
         response = http.request(request)
 
         if response.code.to_i >= 200 && response.code.to_i < 300
-          response
+          JSON.parse(response.body, object_class: OpenStruct)
         else
           raise "HTTP Error: #{response.code}"
         end
