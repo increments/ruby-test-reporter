@@ -15,7 +15,9 @@ module CodeClimate
             name:             "circlci",
             build_identifier: env['CIRCLE_BUILD_NUM'],
             branch:           env['CIRCLE_BRANCH'],
-            commit_sha:       env['CIRCLE_SHA1']
+            commit_sha:       env['CIRCLE_SHA1'],
+            node_index:       env['CIRCLE_NODE_INDEX'],
+            node_total:       env['CIRCLE_NODE_TOTAL']
           }
         elsif env['SEMAPHORE']
           {
